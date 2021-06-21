@@ -8,28 +8,11 @@
 
 package com.salesforce.mirus;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
 import com.salesforce.mirus.config.SourceConfigDefinition;
 import com.salesforce.mirus.config.TaskConfig;
 import com.salesforce.mirus.config.TaskConfig.ReplayPolicy;
 import com.salesforce.mirus.config.TaskConfigDefinition;
 import com.salesforce.mirus.utils.MockTime;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.MockConsumer;
@@ -48,6 +31,15 @@ import org.apache.kafka.connect.source.SourceTaskContext;
 import org.apache.kafka.connect.storage.OffsetStorageReader;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class MirusSourceTaskTest {
 
@@ -418,6 +410,7 @@ public class MirusSourceTaskTest {
     TaskConfig config = new TaskConfig(mockTaskProperties());
     // no new data
     mirusSourceTask.time.sleep(config.getCommitFailureRestartMs() + 10);
+    mirusSourceTask.poll();
     // new data coming
     mockConsumer.addRecord(new ConsumerRecord<>(TOPIC, 0, 1, new byte[] {}, new byte[] {}));
     mockConsumer.addRecord(new ConsumerRecord<>(TOPIC, 1, 1, new byte[] {}, new byte[] {}));
